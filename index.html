@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Path Puzzle</title>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <!-- <link rel="icon" type="image/png" sizes="174x174" href="./style/favicon.png"> -->
+        
+        <script src="phaser.min.js"></script>
+
+        <!-- <link rel="stylesheet" type="text/css" href="./style/examples.css"> -->
+
+        <script>
+
+            var cfg = {
+                cols: 3,
+                rows: 3,
+                tileSize: 506,
+                tileScale: 0.5,
+                tileSpacing: 0
+            }
+
+            var config = {
+                type: Phaser.AUTO,
+                width: cfg.tileSize * cfg.tileScale * cfg.cols + cfg.tileSpacing * (cfg.cols + 1),
+                height: cfg.tileSize * cfg.tileScale * cfg.rows + cfg.tileSpacing * (cfg.rows + 1),
+                //width: 788,
+                //height: 788,
+                // physics: {
+                //     default: 'arcade',
+                //     arcade: {
+                //         gravity: { y: 200 }
+                //     }
+                // },
+                backgroundColor: 0xffff5555,
+                //backgroundColor: 0xffffffff,
+                scene: {
+                    preload: preload,
+                    create: create
+                    //update: update
+                }
+            };
+
+            var tiles;
+            var factory;
+
+            var game = new Phaser.Game(config);
+
+            function getTileName (number) {
+                return 'tile-' + (number + '').padStart(2, '0');
+            }
+
+            function generate () {
+                tiles.clear(true, true);
+                var offset = (cfg.tileSize * cfg.tileScale) / 2 + cfg.tileSpacing;
+
+                for (var col = 0; col < cfg.cols; col++) {
+                    for (var row = 0; row < cfg.rows; row++) {
+                        var num = Phaser.Math.RND.integerInRange(1, 35);
+                        tiles.add(factory.image(
+                            offset + cfg.tileSize * cfg.tileScale * col + cfg.tileSpacing * col,
+                            offset + cfg.tileSize * cfg.tileScale * row + cfg.tileSpacing * row,
+                            getTileName(num))
+                            //.setDisplayOrigin(0,0)
+                            .setScale(cfg.tileScale)
+                            .setAngle(Phaser.Math.RND.pick([0, 90, 180, 270])));
+                    }
+                }
+            }
+
+            function preload ()
+            {
+                for (var i = 1; i <= 35; i++) {
+                    var tileName = getTileName(i);
+                    this.load.image(tileName, tileName + '.png');
+                }
+            }
+
+            function create ()
+            {
+                this.input.mouse.disableContextMenu();
+                factory = this.add;
+
+                tiles = this.add.group();
+
+                generate();
+            }
+        </script>
+
+    </head>
+
+    <body>
+  
+        <!-- <p>
+            <b>Scroll:</b> Arrow Keys,
+            <b>Add Note:</b> Left-Click,
+            <b>Remove Note:</b> Right-Click,
+            <b>Play/Stop:</b> Space
+        </p>
+        -->
+
+        <input type="button" name="generateButton" value="Generate" onclick="generate()">
+
+    </body>
+
+</html>
